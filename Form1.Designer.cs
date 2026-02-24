@@ -70,8 +70,11 @@
             this.btnInfo = new System.Windows.Forms.ToolStripButton();
             this.txtInput = new System.Windows.Forms.RichTextBox();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.btnSize = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnSize)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -420,11 +423,45 @@
             this.txtOutput.TabStop = false;
             this.txtOutput.Text = "";
             // 
+            // btnSize
+            // 
+            this.btnSize.Location = new System.Drawing.Point(957, 28);
+            this.btnSize.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.btnSize.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.btnSize.Name = "btnSize";
+            this.btnSize.Size = new System.Drawing.Size(120, 22);
+            this.btnSize.TabIndex = 4;
+            this.btnSize.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.btnSize.ValueChanged += new System.EventHandler(this.btnSize_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(818, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(114, 16);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Размер шрифта:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 562);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnSize);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.txtInput);
             this.Controls.Add(this.toolStrip1);
@@ -436,6 +473,7 @@
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -484,6 +522,8 @@
         private System.Windows.Forms.ToolStripButton btnInfo;
         private System.Windows.Forms.RichTextBox txtInput;
         private System.Windows.Forms.RichTextBox txtOutput;
+        private System.Windows.Forms.NumericUpDown btnSize;
+        private System.Windows.Forms.Label label1;
     }
 }
 

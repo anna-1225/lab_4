@@ -1,6 +1,7 @@
 ﻿using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -170,6 +171,13 @@ namespace new2026
             {
                 txtInput.Redo();
             }
+        }
+
+        private void btnSize_ValueChanged(object sender, EventArgs e)
+        {
+            float newSize = (float)btnSize.Value;
+            txtInput.Font = new Font(txtInput.Font.FontFamily, newSize, txtInput.Font.Style);
+            txtOutput.Font = new Font(txtOutput.Font.FontFamily, newSize, txtOutput.Font.Style);
         }
     }
 }

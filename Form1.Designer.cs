@@ -68,11 +68,14 @@
             this.btnSize = new System.Windows.Forms.NumericUpDown();
             this.Font = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSize)).BeginInit();
             this.panel1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -105,14 +108,14 @@
             // menuAdd
             // 
             this.menuAdd.Name = "menuAdd";
-            this.menuAdd.Size = new System.Drawing.Size(224, 26);
+            this.menuAdd.Size = new System.Drawing.Size(192, 26);
             this.menuAdd.Text = "Создать";
             this.menuAdd.Click += new System.EventHandler(this.menuAdd_Click);
             // 
             // menuOpen
             // 
             this.menuOpen.Name = "menuOpen";
-            this.menuOpen.Size = new System.Drawing.Size(224, 26);
+            this.menuOpen.Size = new System.Drawing.Size(192, 26);
             this.menuOpen.Text = "Открыть";
             this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
             // 
@@ -125,7 +128,7 @@
             // menuSaveAs
             // 
             this.menuSaveAs.Name = "menuSaveAs";
-            this.menuSaveAs.Size = new System.Drawing.Size(224, 26);
+            this.menuSaveAs.Size = new System.Drawing.Size(192, 26);
             this.menuSaveAs.Text = "Сохранить как";
             this.menuSaveAs.Click += new System.EventHandler(this.menuSaveAs_Click);
             // 
@@ -153,49 +156,49 @@
             // menuCancel
             // 
             this.menuCancel.Name = "menuCancel";
-            this.menuCancel.Size = new System.Drawing.Size(224, 26);
+            this.menuCancel.Size = new System.Drawing.Size(176, 26);
             this.menuCancel.Text = "Отмена";
             this.menuCancel.Click += new System.EventHandler(this.menuCancel_Click);
             // 
             // menuRepeat
             // 
             this.menuRepeat.Name = "menuRepeat";
-            this.menuRepeat.Size = new System.Drawing.Size(224, 26);
+            this.menuRepeat.Size = new System.Drawing.Size(176, 26);
             this.menuRepeat.Text = "Возврат";
             this.menuRepeat.Click += new System.EventHandler(this.menuRepeat_Click);
             // 
             // menuCut
             // 
             this.menuCut.Name = "menuCut";
-            this.menuCut.Size = new System.Drawing.Size(224, 26);
+            this.menuCut.Size = new System.Drawing.Size(176, 26);
             this.menuCut.Text = "Вырезать";
             this.menuCut.Click += new System.EventHandler(this.menuCut_Click);
             // 
             // menuCopy
             // 
             this.menuCopy.Name = "menuCopy";
-            this.menuCopy.Size = new System.Drawing.Size(224, 26);
+            this.menuCopy.Size = new System.Drawing.Size(176, 26);
             this.menuCopy.Text = "Копировать";
             this.menuCopy.Click += new System.EventHandler(this.menuCopy_Click);
             // 
             // menuInsert
             // 
             this.menuInsert.Name = "menuInsert";
-            this.menuInsert.Size = new System.Drawing.Size(224, 26);
+            this.menuInsert.Size = new System.Drawing.Size(176, 26);
             this.menuInsert.Text = "Вставить ";
             this.menuInsert.Click += new System.EventHandler(this.menuInsert_Click);
             // 
             // menuDelete
             // 
             this.menuDelete.Name = "menuDelete";
-            this.menuDelete.Size = new System.Drawing.Size(224, 26);
+            this.menuDelete.Size = new System.Drawing.Size(176, 26);
             this.menuDelete.Text = "Удалить";
             this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
             // 
             // menuDeleteAll
             // 
             this.menuDeleteAll.Name = "menuDeleteAll";
-            this.menuDeleteAll.Size = new System.Drawing.Size(224, 26);
+            this.menuDeleteAll.Size = new System.Drawing.Size(176, 26);
             this.menuDeleteAll.Text = "Удалить все";
             this.menuDeleteAll.Click += new System.EventHandler(this.menuDeleteAll_Click);
             // 
@@ -218,7 +221,7 @@
             // menuReference
             // 
             this.menuReference.Name = "menuReference";
-            this.menuReference.Size = new System.Drawing.Size(224, 26);
+            this.menuReference.Size = new System.Drawing.Size(197, 26);
             this.menuReference.Text = "Вызов справки";
             this.menuReference.Click += new System.EventHandler(this.menuReference_Click_1);
             // 
@@ -432,6 +435,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.statusStrip);
             this.panel1.Controls.Add(this.txtOutput);
             this.panel1.Controls.Add(this.txtInput);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -440,14 +444,33 @@
             this.panel1.Size = new System.Drawing.Size(1153, 507);
             this.panel1.TabIndex = 7;
             // 
+            // statusStrip
+            // 
+            this.statusStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 317);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1153, 26);
+            this.statusStrip.TabIndex = 4;
+            this.statusStrip.Text = "statusStrip1";
+            // 
             // txtOutput
             // 
             this.txtOutput.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.txtOutput.Location = new System.Drawing.Point(0, 343);
             this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ReadOnly = true;
             this.txtOutput.Size = new System.Drawing.Size(1153, 164);
             this.txtOutput.TabIndex = 3;
             this.txtOutput.Text = "";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(48, 20);
+            this.toolStripStatusLabel.Text = "Готов";
             // 
             // Form1
             // 
@@ -469,6 +492,9 @@
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSize)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -516,6 +542,8 @@
         private System.Windows.Forms.ToolStripMenuItem btnRussian;
         private System.Windows.Forms.ToolStripMenuItem menuRepeat;
         private System.Windows.Forms.RichTextBox txtOutput;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }
 

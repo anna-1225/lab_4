@@ -11,8 +11,6 @@ namespace new2026
 {
     public partial class Form1 : Form
     {
-        private ToolStripStatusLabel toolStripStatusLabel;
-        private StatusStrip statusStrip;
 
 
         public Form1()
@@ -21,20 +19,7 @@ namespace new2026
             txtInput.AllowDrop = true;
             txtInput.DragEnter += TxtInput_DragEnter;
             txtInput.DragDrop += TxtInput_DragDrop;
-            InitializeStatusStrip();
 
-        }
-        private void InitializeStatusStrip()
-        {
-            statusStrip = new StatusStrip();
-
-            toolStripStatusLabel = new ToolStripStatusLabel();
-            toolStripStatusLabel.Text = "Готов";
-            toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
-
-            statusStrip.Items.Add(toolStripStatusLabel);
-
-            this.Controls.Add(statusStrip);
         }
 
         private void UpdateStatus(string message)
@@ -76,6 +61,7 @@ namespace new2026
 
                 if (results.Errors.Count > 0)
                 {
+                    UpdateStatus("Ошибка компиляции");
                     foreach (CompilerError error in results.Errors)
                     {
                         txtOutput.Text = txtOutput.Text + "Ошибка: " + error.ErrorText + "\n";

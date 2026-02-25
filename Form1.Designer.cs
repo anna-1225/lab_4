@@ -122,8 +122,9 @@
             // menuSave
             // 
             this.menuSave.Name = "menuSave";
-            this.menuSave.Size = new System.Drawing.Size(192, 26);
+            this.menuSave.Size = new System.Drawing.Size(224, 26);
             this.menuSave.Text = "Сохранить ";
+            this.menuSave.Click += new System.EventHandler(this.menuSave_Click);
             // 
             // menuSaveAs
             // 

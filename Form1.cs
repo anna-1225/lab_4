@@ -11,7 +11,7 @@ namespace new2026
 {
     public partial class Form1 : Form
     {
-
+        private string _currentFilePath = "";
 
         public Form1()
         {
@@ -114,6 +114,7 @@ namespace new2026
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 txtInput.Text = System.IO.File.ReadAllText(openFile.FileName);
+                _currentFilePath = openFile.FileName;
 
             }
         }
@@ -123,6 +124,26 @@ namespace new2026
         }
         private void SaveButton()
         {
+            if (string.IsNullOrEmpty(_currentFilePath))
+            {
+                SaveAsButton();
+            }
+            else
+            {
+                try
+                {
+                    System.IO.File.WriteAllText(_currentFilePath, txtInput.Text);
+                    UpdateStatus("Сохранено: " + Path.GetFileName(_currentFilePath));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при сохранении: " + ex.Message, "Ошибка",
+                                   MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        private void SaveAsButton()
+        {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.Filter = "Text Files (*.txt)|*.txt|All files (*.*)|*.*";
             UpdateStatus("Файл сохранен");
@@ -130,6 +151,7 @@ namespace new2026
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
                 System.IO.File.WriteAllText(saveFile.FileName, txtInput.Text);
+                _currentFilePath = saveFile.FileName;
             }
         }
         private void CopyButton()
@@ -199,7 +221,7 @@ namespace new2026
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveButton();
+            SaveAsButton();
         }
 
         private void btnCopy_Click(object sender, EventArgs e)
@@ -327,7 +349,7 @@ namespace new2026
 
         private void menuSaveAs_Click(object sender, EventArgs e)
         {
-            SaveButton();
+            SaveAsButton();
         }
 
         private void menuCancel_Click(object sender, EventArgs e)
@@ -415,6 +437,11 @@ namespace new2026
             {
                 e.Cancel = true;
             }
+        }
+
+        private void menuSave_Click(object sender, EventArgs e)
+        {
+            SaveButton();
         }
     }
 

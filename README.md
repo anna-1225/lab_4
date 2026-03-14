@@ -49,7 +49,22 @@ max = a if a > b else b;
 max = a if a > b else b;
 ```
 Результат работы программы:
-
+![Результат работы 1](https://github.com/anna-1225/lab_2/blob/main/Resources/1.png)
+### Некорректная строка:
+Входная строка:
+```
+max = a if a > b else b"
+```
+Результат работы программы:
+![Результат работы 2](https://github.com/anna-1225/lab_2/blob/main/Resources/2.png)
+### Многострочный ввод:
+Входная строка:
+```
+max = a if a > b else b;
+x = 10 + y;
+```
+Результат работы программы:
+![Результат работы 3](https://github.com/anna-1225/lab_2/blob/main/Resources/3.png)
 
 
 

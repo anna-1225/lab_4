@@ -1,7 +1,7 @@
-﻿
-using Microsoft.CSharp;
+﻿using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -12,23 +12,69 @@ namespace new2026
     public partial class Form1 : Form
     {
         private string _currentFilePath = "";
+        private List<Token> _lastTokens;
 
         public Form1()
         {
             InitializeComponent();
+            // Просто скрываем txtOutput
+
+            // Показываем dataGridView1 (он должен быть на форме)
+            dataGridView1.Visible = true;
+            dataGridView1.BringToFront(); // Чтобы был поверх
             txtInput.AllowDrop = true;
+
             txtInput.DragEnter += TxtInput_DragEnter;
             txtInput.DragDrop += TxtInput_DragDrop;
 
+            // Настройка DataGridView
+            SetupDataGridView();
+
+            // Добавляем обработчик двойного клика по таблице
+            dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
         }
 
-        private void UpdateStatus(string message)
+        private void SetupDataGridView()
         {
-            if (toolStripStatusLabel != null)
-            {
-                toolStripStatusLabel.Text = message;
-            }
+            // Очищаем столбцы
+            dataGridView1.Columns.Clear();
+
+            // Добавляем столбцы
+            dataGridView1.Columns.Add("Code", "Код");
+            dataGridView1.Columns.Add("Type", "Тип");
+            dataGridView1.Columns.Add("Value", "Лексема");
+            dataGridView1.Columns.Add("Location", "Местоположение");
+
+            // Настройка внешнего вида
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.ReadOnly = true;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.RowHeadersVisible = false;
         }
+
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || _lastTokens == null || e.RowIndex >= _lastTokens.Count) return;
+
+            var token = _lastTokens[e.RowIndex];
+
+            // Простой переход к строке
+            txtInput.Focus();
+
+            // Находим позицию в тексте
+            int pos = 0;
+            string[] lines = txtInput.Text.Split('\n');
+            for (int i = 0; i < token.Line - 1; i++)
+                pos += lines[i].Length + 1;
+
+            txtInput.SelectionStart = pos + token.Position;
+            txtInput.SelectionLength = token.Value.Length;
+            txtInput.ScrollToCaret();
+        }
+
+
         private bool AskToSave()
         {
             if (string.IsNullOrWhiteSpace(txtInput.Text))
@@ -54,10 +100,12 @@ namespace new2026
                 return false;
             }
         }
+
         private void StartButton()
         {
-            UpdateStatus("Лексический анализ");
-            txtOutput.Clear();
+
+            // Очищаем таблицу
+            dataGridView1.Rows.Clear();
 
             try
             {
@@ -65,62 +113,79 @@ namespace new2026
                 Scanner scanner = new Scanner();
                 var tokens = scanner.Analyze(code);
 
-                // Заголовок таблицы
-                txtOutput.AppendText("Код\tТип\t\tЛексема\t\tСтрока\tПозиция\r\n");
-                txtOutput.AppendText(new string('-', 60) + "\r\n");
+                // Сохраняем токены
+                _lastTokens = tokens;
 
                 bool hasErrors = false;
 
                 foreach (var token in tokens)
                 {
-                    string line = $"{token.Code}\t{token.Type}\t\t{token.Value}\t\t{token.Line}\t{token.Position}\r\n";
-                    txtOutput.AppendText(line);
+                    // Формируем строку местоположения
+                    string location;
+                    if (token.Position == 0)
+                        location = $"строка {token.Line}";
+                    else
+                        location = $"строка {token.Line}, позиция {token.Position}";
 
+                    // Добавляем строку в таблицу
+                    int rowIndex = dataGridView1.Rows.Add(
+                        token.Code,
+                        token.Type,
+                        token.Value,
+                        location
+                    );
+
+                    // Подсвечиваем ошибки красным
                     if (token.IsError)
+                    {
+                        dataGridView1.Rows[rowIndex].DefaultCellStyle.ForeColor = Color.Red;
                         hasErrors = true;
+                    }
                 }
 
-                txtOutput.AppendText(new string('-', 60) + "\r\n");
-                txtOutput.AppendText($"Всего лексем: {tokens.Count}\r\n");
+                // Добавляем итоговую строку
+                int summaryRowIndex = dataGridView1.Rows.Add(
+                    "ИТОГО:",
+                    "",
+                    $"Всего лексем: {tokens.Count}",
+                    hasErrors ? "Есть ошибки!" : "Ошибок нет"
+                );
 
-                if (hasErrors)
-                    txtOutput.AppendText("Обнаружены ошибки!\r\n");
-                else
-                    txtOutput.AppendText("Ошибок не обнаружено\r\n");
+                // Выделяем итоговую строку жирным
+                dataGridView1.Rows[summaryRowIndex].DefaultCellStyle.Font =
+                    new Font(dataGridView1.Font, FontStyle.Bold);
 
-                UpdateStatus(hasErrors ? "Обнаружены ошибки" : "Анализ завершен");
             }
             catch (Exception ex)
             {
-                txtOutput.Text = "Ошибка: " + ex.Message;
-                UpdateStatus("Ошибка");
+                dataGridView1.Rows.Add("ОШИБКА:", "", ex.Message, "");
             }
         }
+
         private void OpenButton()
         {
-            if (!AskToSave()) 
+            if (!AskToSave())
                 return;
 
             OpenFileDialog openFile = new OpenFileDialog();
             openFile.Filter = "Text Files (*.txt)|*.txt|All files (*.*)|*.*";
-            UpdateStatus("Файл загружен");
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 txtInput.Text = System.IO.File.ReadAllText(openFile.FileName);
                 _currentFilePath = openFile.FileName;
-
             }
         }
+
         private void AddButton()
         {
             if (AskToSave())
             {
                 txtInput.Text = "";
                 _currentFilePath = "";
-                UpdateStatus("Новый файл");
             }
         }
+
         private void SaveButton()
         {
             if (string.IsNullOrEmpty(_currentFilePath))
@@ -132,7 +197,6 @@ namespace new2026
                 try
                 {
                     System.IO.File.WriteAllText(_currentFilePath, txtInput.Text);
-                    UpdateStatus("Сохранено: " + Path.GetFileName(_currentFilePath));
                 }
                 catch (Exception ex)
                 {
@@ -141,11 +205,11 @@ namespace new2026
                 }
             }
         }
+
         private void SaveAsButton()
         {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.Filter = "Text Files (*.txt)|*.txt|All files (*.*)|*.*";
-            UpdateStatus("Файл сохранен");
 
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
@@ -153,6 +217,7 @@ namespace new2026
                 _currentFilePath = saveFile.FileName;
             }
         }
+
         private void CopyButton()
         {
             if (txtInput.SelectedText != "")
@@ -160,6 +225,7 @@ namespace new2026
                 Clipboard.SetText(txtInput.SelectedText);
             }
         }
+
         private void InsertButton()
         {
             if (Clipboard.ContainsText())
@@ -167,6 +233,7 @@ namespace new2026
                 txtInput.Text = txtInput.Text + Clipboard.GetText();
             }
         }
+
         private void CutButton()
         {
             if (txtInput.SelectedText != "")
@@ -177,7 +244,6 @@ namespace new2026
                 int selectionLength = txtInput.SelectionLength;
 
                 txtInput.Text = txtInput.Text.Remove(selectionStart, selectionLength);
-
                 txtInput.SelectionStart = selectionStart;
             }
         }
@@ -189,6 +255,7 @@ namespace new2026
                 txtInput.Undo();
             }
         }
+
         private void RepeatButton()
         {
             if (txtInput.CanRedo)
@@ -197,7 +264,7 @@ namespace new2026
             }
         }
 
-        
+        // Обработчики кнопок
         private void StartButton_Click(object sender, EventArgs e)
         {
             StartButton();
@@ -252,8 +319,9 @@ namespace new2026
         {
             float newSize = (float)btnSize.Value;
             txtInput.Font = new Font(txtInput.Font.FontFamily, newSize, txtInput.Font.Style);
-            txtOutput.Font = new Font(txtOutput.Font.FontFamily, newSize, txtOutput.Font.Style);
+            dataGridView1.Font = new Font(dataGridView1.Font.FontFamily, newSize, dataGridView1.Font.Style);
         }
+
         private void TxtInput_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -331,9 +399,6 @@ namespace new2026
             menuAbout.Text = "О программе";
             Language.Text = "Язык";
             Font.Text = "Размер шрифта";
-
-
-
         }
 
         private void menuAdd_Click(object sender, EventArgs e)
@@ -401,10 +466,9 @@ namespace new2026
         {
             string helpText =
                 "Описание функций приложения\n" +
-
                 "Основные функции компилятора:\n" +
-                "- Запуск кода - компилирует и выполняет код\n" +
-                "- Автоматическое добавление структуры класса\n\n" +
+                "- Запуск кода - выполняет лексический анализ\n" +
+                "- Результат отображается в таблице\n\n" +
 
                 "Работа с файлами:\n" +
                 "- Создать - очищает поле ввода\n" +
@@ -415,6 +479,11 @@ namespace new2026
                 "- Отменить/Повторить - отмена/повтор действий\n" +
                 "- Вырезать/Копировать/Вставить - работа с буфером\n" +
                 "- Удалить/Удалить все - удаление текста\n\n" +
+
+                "Таблица результатов:\n" +
+                "- Двойной клик по строке - переход к месту в коде\n" +
+                "- Ошибки выделены красным цветом\n" +
+                "- В последней строке итоговая информация\n\n" +
 
                 "Дополнительно:\n" +
                 "- Изменение размера шрифта\n" +
@@ -443,5 +512,4 @@ namespace new2026
             SaveButton();
         }
     }
-
 }

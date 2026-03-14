@@ -16,12 +16,35 @@ namespace new2026
 
     public class Scanner
     {
-        private readonly HashSet<char> _letters = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_");
-        private readonly HashSet<char> _digits = new HashSet<char>("0123456789");
-        private readonly HashSet<char> _operators = new HashSet<char>("=<>!+-*/");
-        private readonly HashSet<char> _delimiters = new HashSet<char>(";,.(){}[]");
+        // Вместо HashSet используем строки для проверки
+        private const string _letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+        private const string _digits = "0123456789";
+        private const string _operators = "=<>!+-*/";
+        private const string _delimiters = ";,.(){}[] ";
 
-        private readonly HashSet<string> _keywords = new HashSet<string> { "if", "else" };
+        private readonly string[] _keywords = new string[] { "if", "else" };
+
+        // Метод для проверки наличия символа в строке
+        private bool ContainsChar(string str, char c)
+        {
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == c)
+                    return true;
+            }
+            return false;
+        }
+
+        // Метод для проверки ключевого слова
+        private bool IsKeyword(string word)
+        {
+            for (int i = 0; i < _keywords.Length; i++)
+            {
+                if (_keywords[i] == word)
+                    return true;
+            }
+            return false;
+        }
 
         public List<Token> Analyze(string text)
         {
@@ -33,12 +56,6 @@ namespace new2026
             {
                 char c = text[pos];
 
-                if (c == ' ' || c == '\t')
-                {
-                    pos++;
-                    continue;
-                }
-
                 if (c == '\n')
                 {
                     line++;
@@ -48,11 +65,23 @@ namespace new2026
 
                 int startPos = pos;
 
-                if (_digits.Contains(c))
+                // Проверка на цифру
+                if (ContainsChar(_digits, c))
                 {
                     string num = "";
-                    while (pos < text.Length && (_digits.Contains(text[pos]) || text[pos] == '.'))
-                        num += text[pos++];
+                    while (pos < text.Length)
+                    {
+                        char current = text[pos];
+                        if (ContainsChar(_digits, current) || current == '.')
+                        {
+                            num += current;
+                            pos++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
 
                     tokens.Add(new Token
                     {
@@ -64,21 +93,34 @@ namespace new2026
                     });
                 }
 
-                else if (_letters.Contains(c))
+                // Проверка на букву
+                else if (ContainsChar(_letters, c))
                 {
                     string word = "";
-                    while (pos < text.Length && (_letters.Contains(text[pos]) || _digits.Contains(text[pos])))
-                        word += text[pos++];
+                    while (pos < text.Length)
+                    {
+                        char current = text[pos];
+                        if (ContainsChar(_letters, current) || ContainsChar(_digits, current))
+                        {
+                            word += current;
+                            pos++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
 
-                    if (_keywords.Contains(word))
+                    if (IsKeyword(word))
                         tokens.Add(new Token { Code = 1, Type = "Ключевое слово", Value = word, Line = line, Position = startPos });
                     else
                         tokens.Add(new Token { Code = 2, Type = "Идентификатор", Value = word, Line = line, Position = startPos });
                 }
 
-                else if (_operators.Contains(c))
+                // Проверка на оператор
+                else if (ContainsChar(_operators, c))
                 {
-                    if (pos + 1 < text.Length && _operators.Contains(text[pos + 1]) &&
+                    if (pos + 1 < text.Length && ContainsChar(_operators, text[pos + 1]) &&
                         (c == '=' || c == '>' || c == '<' || c == '!'))
                     {
                         string op = c.ToString() + text[pos + 1];
@@ -92,12 +134,14 @@ namespace new2026
                     }
                 }
 
-                else if (_delimiters.Contains(c))
+                // Проверка на разделитель
+                else if (ContainsChar(_delimiters, c))
                 {
                     tokens.Add(new Token { Code = 5, Type = "Разделитель", Value = c.ToString(), Line = line, Position = startPos });
                     pos++;
                 }
 
+                // Обработка ошибки
                 else
                 {
                     tokens.Add(new Token

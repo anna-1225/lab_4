@@ -49,12 +49,21 @@ namespace new2026
             int line = 1;
             int pos = 0;
 
+            StringBuilder errorBuffer = new StringBuilder();
+            int errorStartLine = 0;
+            int errorStartPos = 0;
+            bool isCollectingError = false;
+
             while (pos < text.Length)
             {
                 char c = text[pos];
 
                 if (c == '\n')
                 {
+                    if (isCollectingError)
+                    {
+                        errorBuffer.Append("\\n");
+                    }
                     line++;
                     pos++;
                     continue;
@@ -62,91 +71,125 @@ namespace new2026
 
                 int startPos = pos + 1;
 
-                if (ContainsChar(_digits, c))
+                bool isValidChar = ContainsChar(_digits, c) ||
+                                  ContainsChar(_letters, c) ||
+                                  ContainsChar(_operators, c) ||
+                                  ContainsChar(_delimiters, c);
+
+                if (!isValidChar)
                 {
-                    string num = "";
-                    while (pos < text.Length)
+                    if (!isCollectingError)
                     {
-                        char current = text[pos];
-                        if (ContainsChar(_digits, current) || current == '.')
+                        isCollectingError = true;
+                        errorStartLine = line;
+                        errorStartPos = startPos;
+                    }
+                    errorBuffer.Append(c);
+                    pos++;
+                }
+                else
+                {
+
+                    if (isCollectingError)
+                    {
+                        tokens.Add(new Token
                         {
-                            num += current;
-                            pos++;
+                            Code = 99,
+                            Type = "ОШИБКА",
+                            Value = errorBuffer.ToString(),
+                            Line = errorStartLine,
+                            Position = errorStartPos,
+                            IsError = true
+                        });
+                        errorBuffer.Clear();
+                        isCollectingError = false;
+                    }
+
+                    if (ContainsChar(_digits, c))
+                    {
+                        string num = "";
+                        while (pos < text.Length)
+                        {
+                            char current = text[pos];
+                            if (ContainsChar(_digits, current) || current == '.')
+                            {
+                                num += current;
+                                pos++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        tokens.Add(new Token
+                        {
+                            Code = 3,
+                            Type = "Число",
+                            Value = num,
+                            Line = line,
+                            Position = startPos
+                        });
+                    }
+
+                    else if (ContainsChar(_letters, c))
+                    {
+                        string word = "";
+                        while (pos < text.Length)
+                        {
+                            char current = text[pos];
+                            if (ContainsChar(_letters, current) || ContainsChar(_digits, current))
+                            {
+                                word += current;
+                                pos++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (IsKeyword(word))
+                            tokens.Add(new Token { Code = 1, Type = "Ключевое слово", Value = word, Line = line, Position = startPos });
+                        else
+                            tokens.Add(new Token { Code = 2, Type = "Идентификатор", Value = word, Line = line, Position = startPos });
+                    }
+
+                    else if (ContainsChar(_operators, c))
+                    {
+                        if (pos + 1 < text.Length && ContainsChar(_operators, text[pos + 1]) &&
+                            (c == '=' || c == '>' || c == '<' || c == '!'))
+                        {
+                            string op = c.ToString() + text[pos + 1];
+                            tokens.Add(new Token { Code = 4, Type = "Оператор", Value = op, Line = line, Position = startPos });
+                            pos += 2;
                         }
                         else
                         {
-                            break;
-                        }
-                    }
-
-                    tokens.Add(new Token
-                    {
-                        Code = 3,
-                        Type = "Число",
-                        Value = num,
-                        Line = line,
-                        Position = startPos
-                    });
-                }
-
-                else if (ContainsChar(_letters, c))
-                {
-                    string word = "";
-                    while (pos < text.Length)
-                    {
-                        char current = text[pos];
-                        if (ContainsChar(_letters, current) || ContainsChar(_digits, current))
-                        {
-                            word += current;
+                            tokens.Add(new Token { Code = 4, Type = "Оператор", Value = c.ToString(), Line = line, Position = startPos });
                             pos++;
                         }
-                        else
-                        {
-                            break;
-                        }
                     }
 
-                    if (IsKeyword(word))
-                        tokens.Add(new Token { Code = 1, Type = "Ключевое слово", Value = word, Line = line, Position = startPos });
-                    else
-                        tokens.Add(new Token { Code = 2, Type = "Идентификатор", Value = word, Line = line, Position = startPos });
-                }
-
-                else if (ContainsChar(_operators, c))
-                {
-                    if (pos + 1 < text.Length && ContainsChar(_operators, text[pos + 1]) &&
-                        (c == '=' || c == '>' || c == '<' || c == '!'))
+                    else if (ContainsChar(_delimiters, c))
                     {
-                        string op = c.ToString() + text[pos + 1];
-                        tokens.Add(new Token { Code = 4, Type = "Оператор", Value = op, Line = line, Position = startPos });
-                        pos += 2;
-                    }
-                    else
-                    {
-                        tokens.Add(new Token { Code = 4, Type = "Оператор", Value = c.ToString(), Line = line, Position = startPos });
+                        tokens.Add(new Token { Code = 5, Type = "Разделитель", Value = c.ToString(), Line = line, Position = startPos });
                         pos++;
                     }
                 }
+            }
 
-                else if (ContainsChar(_delimiters, c))
+            if (isCollectingError)
+            {
+                tokens.Add(new Token
                 {
-                    tokens.Add(new Token { Code = 5, Type = "Разделитель", Value = c.ToString(), Line = line, Position = startPos });
-                    pos++;
-                }
-
-                else
-                {
-                    tokens.Add(new Token
-                    {
-                        Code = 99,
-                        Type = "ОШИБКА",
-                        Value = c.ToString(),
-                        Line = line,
-                        Position = startPos,
-                        IsError = true
-                    });
-                    pos++;
-                }
+                    Code = 99,
+                    Type = "ОШИБКА",
+                    Value = errorBuffer.ToString(),
+                    Line = errorStartLine,
+                    Position = errorStartPos,
+                    IsError = true
+                });
             }
 
             return tokens;

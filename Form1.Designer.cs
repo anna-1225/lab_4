@@ -68,16 +68,20 @@
             this.btnSize = new System.Windows.Forms.NumericUpDown();
             this.Font = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvResults = new System.Windows.Forms.DataGridView();
+            this.colFragment = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colLocation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnSearchLogins = new System.Windows.Forms.Button();
+            this.btnSearchNumbers = new System.Windows.Forms.Button();
+            this.btnSearchMoney = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSize)).BeginInit();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -91,7 +95,7 @@
             this.Language});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1153, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1267, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -210,7 +214,6 @@
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(55, 24);
             this.Start.Text = "Пуск";
-            this.Start.Click += new System.EventHandler(this.Start_Click);
             // 
             // Reference
             // 
@@ -226,7 +229,6 @@
             this.menuReference.Name = "menuReference";
             this.menuReference.Size = new System.Drawing.Size(197, 26);
             this.menuReference.Text = "Вызов справки";
-            this.menuReference.Click += new System.EventHandler(this.menuReference_Click_1);
             // 
             // menuAbout
             // 
@@ -280,7 +282,7 @@
             this.btnInfo});
             this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1153, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1267, 27);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -372,7 +374,6 @@
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(29, 24);
             this.btnStart.Text = "Пуск";
-            this.btnStart.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // btnHelp
             // 
@@ -382,7 +383,6 @@
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(29, 24);
             this.btnHelp.Text = "Вызов справки";
-            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // btnInfo
             // 
@@ -399,14 +399,14 @@
             this.txtInput.Location = new System.Drawing.Point(0, 0);
             this.txtInput.Margin = new System.Windows.Forms.Padding(0);
             this.txtInput.Name = "txtInput";
-            this.txtInput.Size = new System.Drawing.Size(1153, 507);
+            this.txtInput.Size = new System.Drawing.Size(1267, 507);
             this.txtInput.TabIndex = 2;
             this.txtInput.TabStop = false;
             this.txtInput.Text = "";
             // 
             // btnSize
             // 
-            this.btnSize.Location = new System.Drawing.Point(957, 28);
+            this.btnSize.Location = new System.Drawing.Point(525, 26);
             this.btnSize.Maximum = new decimal(new int[] {
             24,
             0,
@@ -430,7 +430,7 @@
             // Font
             // 
             this.Font.AutoSize = true;
-            this.Font.Location = new System.Drawing.Point(818, 30);
+            this.Font.Location = new System.Drawing.Point(405, 28);
             this.Font.Name = "Font";
             this.Font.Size = new System.Drawing.Size(114, 16);
             this.Font.TabIndex = 5;
@@ -439,65 +439,104 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.Controls.Add(this.dataGridView1);
+            this.panel1.Controls.Add(this.dgvResults);
+            this.panel1.Controls.Add(this.txtOutput);
             this.panel1.Controls.Add(this.txtInput);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 55);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1153, 507);
+            this.panel1.Size = new System.Drawing.Size(1267, 507);
             this.panel1.TabIndex = 7;
             // 
-            // dataGridView1
+            // dgvResults
             // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column1,
-            this.Column2,
-            this.Column3,
-            this.Column4});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 149);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1153, 358);
-            this.dataGridView1.TabIndex = 5;
+            this.dgvResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvResults.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colFragment,
+            this.colLocation,
+            this.colDescription});
+            this.dgvResults.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.dgvResults.Location = new System.Drawing.Point(0, 179);
+            this.dgvResults.Name = "dgvResults";
+            this.dgvResults.RowHeadersWidth = 51;
+            this.dgvResults.RowTemplate.Height = 24;
+            this.dgvResults.Size = new System.Drawing.Size(1267, 328);
+            this.dgvResults.TabIndex = 4;
             // 
-            // Column1
+            // colFragment
             // 
-            this.Column1.HeaderText = "Условный код";
-            this.Column1.MinimumWidth = 6;
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
+            this.colFragment.HeaderText = "Неверный фрагмент";
+            this.colFragment.MinimumWidth = 6;
+            this.colFragment.Name = "colFragment";
             // 
-            // Column2
+            // colLocation
             // 
-            this.Column2.HeaderText = "Тип лексемы";
-            this.Column2.MinimumWidth = 6;
-            this.Column2.Name = "Column2";
-            this.Column2.ReadOnly = true;
+            this.colLocation.HeaderText = "Местоположение";
+            this.colLocation.MinimumWidth = 6;
+            this.colLocation.Name = "colLocation";
             // 
-            // Column3
+            // colDescription
             // 
-            this.Column3.HeaderText = "Лексема";
-            this.Column3.MinimumWidth = 6;
-            this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
+            this.colDescription.HeaderText = "Описание ошибки";
+            this.colDescription.MinimumWidth = 6;
+            this.colDescription.Name = "colDescription";
             // 
-            // Column4
+            // txtOutput
             // 
-            this.Column4.HeaderText = "Метоположение";
-            this.Column4.MinimumWidth = 6;
-            this.Column4.Name = "Column4";
-            this.Column4.ReadOnly = true;
+            this.txtOutput.Location = new System.Drawing.Point(0, 272);
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.Size = new System.Drawing.Size(1153, 177);
+            this.txtOutput.TabIndex = 3;
+            this.txtOutput.Text = "";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(746, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 16);
+            this.label1.TabIndex = 9;
+            // 
+            // btnSearchLogins
+            // 
+            this.btnSearchLogins.Location = new System.Drawing.Point(705, 10);
+            this.btnSearchLogins.Name = "btnSearchLogins";
+            this.btnSearchLogins.Size = new System.Drawing.Size(75, 42);
+            this.btnSearchLogins.TabIndex = 10;
+            this.btnSearchLogins.Text = "Логин";
+            this.btnSearchLogins.UseVisualStyleBackColor = true;
+            this.btnSearchLogins.Click += new System.EventHandler(this.btnSearch_Click_3);
+            // 
+            // btnSearchNumbers
+            // 
+            this.btnSearchNumbers.Location = new System.Drawing.Point(823, 10);
+            this.btnSearchNumbers.Name = "btnSearchNumbers";
+            this.btnSearchNumbers.Size = new System.Drawing.Size(75, 42);
+            this.btnSearchNumbers.TabIndex = 11;
+            this.btnSearchNumbers.Text = "Число";
+            this.btnSearchNumbers.UseVisualStyleBackColor = true;
+            this.btnSearchNumbers.Click += new System.EventHandler(this.btnSearchNumbers_Click_1);
+            // 
+            // btnSearchMoney
+            // 
+            this.btnSearchMoney.Location = new System.Drawing.Point(934, 7);
+            this.btnSearchMoney.Name = "btnSearchMoney";
+            this.btnSearchMoney.Size = new System.Drawing.Size(87, 45);
+            this.btnSearchMoney.TabIndex = 12;
+            this.btnSearchMoney.Text = "Денежные валюты";
+            this.btnSearchMoney.UseVisualStyleBackColor = true;
+            this.btnSearchMoney.Click += new System.EventHandler(this.btnSearchMoney_Click_1);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1153, 562);
+            this.ClientSize = new System.Drawing.Size(1267, 562);
+            this.Controls.Add(this.btnSearchMoney);
+            this.Controls.Add(this.btnSearchNumbers);
+            this.Controls.Add(this.btnSearchLogins);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Font);
             this.Controls.Add(this.btnSize);
@@ -513,7 +552,7 @@
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSize)).EndInit();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -560,11 +599,15 @@
         private System.Windows.Forms.ToolStripMenuItem btnEnglish;
         private System.Windows.Forms.ToolStripMenuItem btnRussian;
         private System.Windows.Forms.ToolStripMenuItem menuRepeat;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.RichTextBox txtOutput;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnSearchLogins;
+        private System.Windows.Forms.DataGridView dgvResults;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colFragment;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLocation;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDescription;
+        private System.Windows.Forms.Button btnSearchNumbers;
+        private System.Windows.Forms.Button btnSearchMoney;
     }
 }
 

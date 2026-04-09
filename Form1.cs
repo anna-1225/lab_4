@@ -200,48 +200,44 @@ namespace new2026
                 dgvResults.Rows.Clear();
                 RemoveHighlight();
 
+                string[] lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                string pattern = @"(?:USD|EUR|RUB|GBP|JPY|CNY|UAH|KZT|BYN|PLN|CHF|CAD|AUD|SGD|HKD|TRY|INR|BRL|ZAR|NOK|SEK|DKK|CZK|HUF|RON|MXN|ILS|SAR|AED|KRW|THB|MYR|IDR|PHP|VND|EGP|NGN|PKR|BDT|LKR|MMK|UZS|TMT|GEL|AZN|AMD|MDL|KGS|TJS)[-]?\s*(?:[+-]?\d+(?:[.,]\d+)?)(?:\s*(?:тыс|млн|млрд|trillion|billion|million|thousand))?|(?:[€$£¥₽₴₸฿₩₪₫₦₲₵₡₨₮₯₰₱₲₳₴₵₶₷₸₹₺₻₼₽₾₿])\s*(?:[+-]?\d+(?:[.,]\d+)?)(?:\s*(?:тыс|млн|млрд|trillion|billion|million|thousand))?|(?:[+-]?\d+(?:[.,]\d+)?)\s*(?:USD|EUR|RUB|GBP|JPY|CNY|UAH|KZT|BYN|PLN|CHF|CAD|AUD|SGD|HKD|TRY|INR|BRL|ZAR|NOK|SEK|DKK|CZK|HUF|RON|MXN|ILS|SAR|AED|KRW|THB|MYR|IDR|PHP|VND|EGP|NGN|PKR|BDT|LKR|MMK|UZS|TMT|GEL|AZN|AMD|MDL|KGS|TJS)(?:\s*(?:тыс|млн|млрд|trillion|billion|million|thousand))?|(?:[+-]?\d+(?:[.,]\d+)?)\s*(?:[€$£¥₽₴₸฿₩₪₫₦₲₵₡₨₮₯₰₱₲₳₴₵₶₷₸₹₺₻₼₽₾₿])(?:\s*(?:тыс|млн|млрд|trillion|billion|million|thousand))?";
+                string fullLinePattern = @"^(?:USD|EUR|RUB|GBP|JPY|CNY)\s*(?:[+-]?\d+(?:[.,]\d+)?)$|^(?:[$€£¥₽])\s*(?:[+-]?\d+(?:[.,]\d+)?)$|^(?:[+-]?\d+(?:[.,]\d+)?)\s*(?:USD|EUR|RUB|GBP|JPY|CNY)$|^(?:[+-]?\d+(?:[.,]\d+)?)\s*(?:[$€£¥₽])$";
 
-                RegexOptions options = RegexOptions.None;
-                Regex regex = new Regex(pattern, options);
-
-                MatchCollection matches = regex.Matches(text);
+                Regex regex = new Regex(fullLinePattern);
                 int matchCount = 0;
 
-                foreach (Match match in matches)
+                for (int lineNum = 0; lineNum < lines.Length; lineNum++)
                 {
-                    if (!string.IsNullOrWhiteSpace(match.Value))
+                    string line = lines[lineNum].Trim();
+
+                    if (regex.IsMatch(line))
                     {
                         matchCount++;
-                        string position = GetLineAndColumnPosition(text, match.Index);
+                        int globalPosition = GetGlobalPosition(text, lineNum, 0);
 
                         int rowIndex = dgvResults.Rows.Add(
-                            match.Value,
-                            position,
-                            match.Length
+                            line,
+                            $"{lineNum + 1}, 1",
+                            line.Length
                         );
 
                         dgvResults.Rows[rowIndex].Tag = new MatchInfo
                         {
-                            Index = match.Index,
-                            Length = match.Length,
-                            Value = match.Value
+                            Index = globalPosition,
+                            Length = line.Length,
+                            Value = line
                         };
                     }
                 }
 
                 lblMatchCount.Text = $"Найдено денежных сумм: {matchCount}";
+                lblMatchCount.ForeColor = matchCount == 0 ? Color.Red : Color.Green;
 
                 if (matchCount == 0)
                 {
-                    lblMatchCount.ForeColor = Color.Red;
                     MessageBox.Show("Денежных сумм не найдено.", "Результат поиска",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    lblMatchCount.ForeColor = Color.Green;
                 }
             }
             catch (Exception ex)
